@@ -1,0 +1,18 @@
+{
+  "name": "binary-tree-search",
+  "version": "1.0.0",
+  "description": "",
+  "main": "binaryTreeSearch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "eslintConfig": {
+    "extends": ["wesbos"]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "eslint-config-wesbos": "^3.2.3"
+  }
+}
