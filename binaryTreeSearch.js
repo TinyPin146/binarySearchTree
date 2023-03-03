@@ -174,6 +174,161 @@ class Tree {
       return sortedArr;
     }
   }
+
+  find(value) {
+    let currentNode = this.root;
+
+    while (currentNode !== null) {
+      if (value === currentNode.data) return currentNode;
+      if (value > currentNode.data) {
+        currentNode = currentNode.right;
+      }
+      if (value < currentNode.data) {
+        currentNode = currentNode.left;
+      }
+    }
+  }
+
+  levelOrderIter(arg) {
+    const queue = [this.root];
+    const nodeArr = [];
+
+    function queueTraversal() {
+      if (queue[0].left !== null) queue.push(queue[0].left);
+      if (queue[0].right !== null) queue.push(queue[0].right);
+      queue.shift();
+    }
+
+    while (queue.length !== 0) {
+      if (arg) {
+        arg.call(this, queue[0]);
+        queueTraversal();
+      } else {
+        nodeArr.push(queue[0]);
+        queueTraversal();
+      }
+    }
+    if (nodeArr.length !== 0) return nodeArr;
+  }
+
+  levelOrderRec(arg, node = this.root) {
+    const nodeArr = [];
+    const queue = [this.root];
+    if (queue[0] === null) return null;
+
+    // function queueTraversal() {
+    //   if (node.left !== null) levelOrderRec(arg, node.left);
+    //   if (node[0].right !== null) levelOrderRec(arg, node.right);
+    // }
+
+    if (arg) {
+      arg.call(this, node);
+      if (node.left !== null) this.levelOrderRec(arg, node.left);
+      if (node.right !== null) this.levelOrderRec(arg, node.right);
+    } else {
+      nodeArr.push(node.data);
+      if (node.left !== null) this.levelOrderRec(arg, node.left);
+      if (node.right !== null) this.levelOrderRec(arg, node.right);
+    }
+    if (nodeArr.length !== 0) return nodeArr;
+  }
+
+  inorder(arg, node = this.root, nodeArr = []) {
+    if (node === null) return;
+
+    if (arg) {
+      if (node.left !== null) this.inorder(arg, node.left, nodeArr);
+      arg.call(this, node);
+      if (node.right !== null) this.inorder(arg, node.right, nodeArr);
+    } else {
+      if (node.left !== null) this.inorder(arg, node.left, nodeArr);
+      nodeArr.push(node);
+      if (node.right !== null) this.inorder(arg, node.right, nodeArr);
+    }
+
+    if (nodeArr.length !== 0) return nodeArr;
+  }
+
+  preorder(arg, node = this.root, nodeArr = []) {
+    if (node === null) return;
+
+    if (arg) {
+      arg.call(this, node);
+      if (node.left !== null) this.preorder(arg, node.left, nodeArr);
+      if (node.right !== null) this.preorder(arg, node.right, nodeArr);
+    } else {
+      nodeArr.push(node);
+      if (node.left !== null) this.preorder(arg, node.left, nodeArr);
+      if (node.right !== null) this.preorder(arg, node.right, nodeArr);
+    }
+
+    if (nodeArr.length !== 0) return nodeArr;
+  }
+
+  postorder(arg, node = this.root, nodeArr = []) {
+    if (node === null) return;
+
+    if (arg) {
+      if (node.left !== null) this.postorder(arg, node.left, nodeArr);
+      if (node.right !== null) this.postorder(arg, node.right, nodeArr);
+      arg.call(this, node);
+    } else {
+      if (node.left !== null) this.postorder(arg, node.left, nodeArr);
+      if (node.right !== null) this.postorder(arg, node.right, nodeArr);
+      nodeArr.push(node.data);
+    }
+
+    if (nodeArr.length !== 0) return nodeArr;
+  }
+
+  height(node) {
+    // const values = this.inorder(undefined, currentNode).map(
+    //   (node) => node.data
+    // );
+
+    // const valueIndex = values.indexOf(value);
+    // const leftHighestValue = Math.max(...values.slice(0, valueIndex));
+    // const rightLargestValue = Math.max(...values.slice(valueIndex + 1));
+
+    // const leftDepth = this.depth(leftHighestValue, currentNode);
+    // const rightDepth = this.depth(rightLargestValue, currentNode);
+    // return leftDepth >= rightDepth ? leftDepth : rightDepth;
+
+    if (node === null) return 0;
+    const leftHeight = this.height(node.left);
+    const rightHeight = this.height(node.right);
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+
+  depth(value, node = this.root) {
+    const nodeToReach = this.find(value);
+    let currentNode = node;
+    let currentDepth = 0;
+
+    while (currentNode !== nodeToReach) {
+      if (nodeToReach.data === currentNode.data) return currentDepth;
+      if (nodeToReach.data > currentNode.data) {
+        currentDepth += 1;
+        currentNode = currentNode.right;
+      }
+      if (value < currentNode.data) {
+        currentDepth += 1;
+        currentNode = currentNode.left;
+      }
+    }
+    return currentDepth;
+  }
+
+  isBalanced() {
+    return false;
+  }
+
+  rebalance() {
+    if (!this.isBalanced()) {
+      const arr = this.inorder();
+      this.root = this.buildTree(arr, 0, arr.length - 1);
+    }
+  }
 }
 
 const prettyPrint = (node, prefix = '', isLeft = true) => {
@@ -187,11 +342,14 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 };
 
 // ! Test code
-const testArr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 9, 7, 67, 6345, 324];
+const testArray = [
+  1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 9, 7, 67, 6345, 324, 200, 6,
+];
 // const testArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-const testTree = new Tree(testArr);
-testTree.delete(67);
-testTree.delete(4);
+const testTree = new Tree(testArray);
 
-console.log(testTree.root, testTree.root.right);
+testTree.insert(10);
+testTree.insert(13);
+testTree.insert(11);
 prettyPrint(testTree.root);
+console.log(testTree.height(testTree.find(67)));
