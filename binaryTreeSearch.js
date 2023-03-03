@@ -113,7 +113,6 @@ class Tree {
           currentNode.right = null;
           currentNode.left = null;
           if (prevNode === null) {
-            console.log({ prevnodeNULL: prevNode });
             this.root = nextBiggestNode;
             return;
           }
@@ -121,7 +120,6 @@ class Tree {
             prevNode.left = nextBiggestNode;
             return;
           }
-          console.log({ prevNode, nextBiggestNode });
           prevNode.right = nextBiggestNode;
           return;
         }
@@ -192,8 +190,8 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 const testArr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 9, 7, 67, 6345, 324];
 // const testArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const testTree = new Tree(testArr);
-
-prettyPrint(testTree.root);
-
 testTree.delete(67);
-console.log({ testTree: testArr.root, right: testTree.right });
+testTree.delete(4);
+
+console.log(testTree.root, testTree.root.right);
+prettyPrint(testTree.root);
