@@ -275,25 +275,13 @@ class Tree {
     } else {
       if (node.left !== null) this.postorder(arg, node.left, nodeArr);
       if (node.right !== null) this.postorder(arg, node.right, nodeArr);
-      nodeArr.push(node.data);
+      nodeArr.push(node);
     }
 
     if (nodeArr.length !== 0) return nodeArr;
   }
 
-  height(node) {
-    // const values = this.inorder(undefined, currentNode).map(
-    //   (node) => node.data
-    // );
-
-    // const valueIndex = values.indexOf(value);
-    // const leftHighestValue = Math.max(...values.slice(0, valueIndex));
-    // const rightLargestValue = Math.max(...values.slice(valueIndex + 1));
-
-    // const leftDepth = this.depth(leftHighestValue, currentNode);
-    // const rightDepth = this.depth(rightLargestValue, currentNode);
-    // return leftDepth >= rightDepth ? leftDepth : rightDepth;
-
+  height(node = this.root) {
     if (node === null) return 0;
     const leftHeight = this.height(node.left);
     const rightHeight = this.height(node.right);
@@ -319,13 +307,14 @@ class Tree {
     return currentDepth;
   }
 
-  isBalanced() {
-    return false;
+  isBalanced(node = this.root) {
+    return !(Math.abs(this.height(node.left) - this.height(node.right)) > 1);
   }
 
   rebalance() {
     if (!this.isBalanced()) {
-      const arr = this.inorder();
+      const arr = this.inorder().map((node) => node.data);
+      this.root = null;
       this.root = this.buildTree(arr, 0, arr.length - 1);
     }
   }
@@ -342,14 +331,36 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
 };
 
 // ! Test code
-const testArray = [
-  1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 9, 7, 67, 6345, 324, 200, 6,
-];
-// const testArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-const testTree = new Tree(testArray);
+function createRandomArr(iterNum, maxValue) {
+  const numArr = [];
+  for (let i = 1; i <= iterNum; i += 1) {
+    numArr.push(Math.floor(Math.random() * maxValue) + 1);
+  }
+  return numArr;
+}
+const balancedBinarySearchTree = new Tree(createRandomArr(25, 100));
+prettyPrint(balancedBinarySearchTree.root);
 
-testTree.insert(10);
-testTree.insert(13);
-testTree.insert(11);
-prettyPrint(testTree.root);
-console.log(testTree.height(testTree.find(67)));
+console.log(balancedBinarySearchTree.isBalanced());
+
+console.log(balancedBinarySearchTree.levelOrderIter().map((node) => node.data));
+console.log(balancedBinarySearchTree.inorder().map((node) => node.data));
+console.log(balancedBinarySearchTree.preorder().map((node) => node.data));
+console.log(balancedBinarySearchTree.postorder().map((node) => node.data));
+
+balancedBinarySearchTree.insert(110);
+balancedBinarySearchTree.insert(150);
+balancedBinarySearchTree.insert(170);
+balancedBinarySearchTree.insert(130);
+balancedBinarySearchTree.insert(190);
+
+prettyPrint(balancedBinarySearchTree.root);
+console.log(balancedBinarySearchTree.isBalanced());
+balancedBinarySearchTree.rebalance();
+console.log(balancedBinarySearchTree.isBalanced());
+
+prettyPrint(balancedBinarySearchTree.root);
+console.log(balancedBinarySearchTree.levelOrderIter().map((node) => node.data));
+console.log(balancedBinarySearchTree.inorder().map((node) => node.data));
+console.log(balancedBinarySearchTree.preorder().map((node) => node.data));
+console.log(balancedBinarySearchTree.postorder().map((node) => node.data));
